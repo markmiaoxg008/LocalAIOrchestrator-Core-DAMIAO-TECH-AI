@@ -1,0 +1,14 @@
+[project]
+name = "local-ai-orchestrator-core"
+version = "0.1.0"
+description = "Minimal local-first AI runtime primitives."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
