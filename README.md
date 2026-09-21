@@ -1,6 +1,6 @@
 # Local AI Orchestrator Core — DAMIAO TECH AI
 
-A minimal open-source subset of a larger local-first AI orchestration system.
+Small, reusable Python runtime primitives for local-first AI applications. This project provides atomic persistence, safe executable resolution, simple local/cloud provider selection, and workspace readiness checks without requiring a full AI-agent framework.
 
 ## Included
 
