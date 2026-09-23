@@ -42,7 +42,21 @@ python3 -m runtime.provider_router selftest
 
 ## Provider Routing Example
 
-A minimal public smoke check is available without exposing private orchestration logic:
+Use the public routing primitive directly:
+
+```python
+from runtime.provider_router import Provider, select_provider
+
+providers = [
+    Provider("local", available=False, local=True),
+    Provider("cloud", available=True),
+]
+
+selected = select_provider(providers)
+print(selected.name if selected else "none")  # cloud
+```
+
+A minimal public smoke check is also available:
 
     python3 -m runtime.provider_router selftest
 
