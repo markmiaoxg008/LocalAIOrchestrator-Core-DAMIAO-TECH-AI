@@ -40,6 +40,39 @@ python3 -m pytest -q
 python3 -m runtime.provider_router selftest
 ```
 
+## Public API Examples
+
+### Atomic Persistence
+
+Write text atomically so readers never observe a partially written file:
+
+    from pathlib import Path
+    from runtime.atomic_file import atomic_write_text
+
+    atomic_write_text(Path("state.txt"), "ready")
+
+### Executable Resolution
+
+Resolve and run an executable without invoking a shell:
+
+    from runtime.executable_resolution import resolve_executable, run_resolved_command
+
+    python = resolve_executable("python3")
+    result = run_resolved_command(["python3", "-c", "print(42)"])
+
+    print(python)
+    print(result["status"])  # PASS
+
+### Workspace Readiness
+
+Check whether a workspace and its required public dependencies are ready:
+
+    from pathlib import Path
+    from runtime.workspace_migration import migration_readiness
+
+    readiness = migration_readiness(Path("."))
+    print(readiness["status"])  # PASS or BLOCKED
+
 ## Provider Routing Example
 
 Use the public routing primitive directly:
