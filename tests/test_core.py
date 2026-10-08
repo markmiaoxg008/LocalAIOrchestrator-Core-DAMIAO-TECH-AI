@@ -56,3 +56,52 @@ def test_provider_routing_local_preference_and_fallback():
         Provider(name="cloud", available=True, local=False),
     ]
     assert select_provider(unavailable_local).name == "cloud"
+
+
+def test_atomic_write_replaces_existing_file():
+    with tempfile.TemporaryDirectory() as td:
+        path = Path(td) / "state.txt"
+        path.write_text("old", encoding="utf-8")
+        atomic_write_text(path, "new")
+        assert path.read_text(encoding="utf-8") == "new"
+
+
+def test_run_resolved_command_blocks_empty_command():
+    result = run_resolved_command([])
+    assert result["status"] == "BLOCKED"
+    assert result["reason"] == "COMMAND_NOT_FOUND"
+    assert result["resolved_executable"] is None
+
+
+def test_run_resolved_command_blocks_missing_executable():
+    result = run_resolved_command(
+        ["damiao-definitely-missing-executable"],
+        path="",
+        system="Linux",
+    )
+    assert result["status"] == "BLOCKED"
+    assert result["reason"] == "COMMAND_NOT_FOUND"
+    assert result["resolved_executable"] is None
+
+
+def test_workspace_migration_readiness_blocks_missing_workspace():
+    with tempfile.TemporaryDirectory() as td:
+        missing = Path(td) / "missing"
+        result = migration_readiness(missing)
+        assert result["status"] == "BLOCKED"
+        assert result["workspace_exists"] is False
+
+
+def test_provider_routing_returns_none_when_all_unavailable():
+    providers = [
+        Provider(name="local", available=False, local=True),
+        Provider(name="cloud", available=False, local=False),
+    ]
+    assert select_provider(providers) is None
+
+
+def test_provider_routing_respects_disabled_fallback():
+    providers = [
+        Provider(name="cloud", available=True, local=False),
+    ]
+    assert select_provider(providers, prefer_local=True, allow_fallback=False) is None
